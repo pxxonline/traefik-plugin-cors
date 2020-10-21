@@ -1,11 +1,20 @@
-displayName: Demo Plugin
+displayName: Cors Plugin
 type: middleware
 
-import: github.com/traefik/plugindemo
+import: github.com/pxxonline/traefik-cors
 
-summary: '[Demo] Add Request Header'
+summary: 'Cors'
 
 testData:
-  Headers:
-    X-Demo: test
-    X-URL: '{{URL}}'
+  AllowMethods:
+    - "GET"
+    - "POST"
+    - "PUT"
+    - "PATCH"
+    - "DELETE"
+    - "HEAD"
+  AllowHeaders:
+    - "Origin"
+    - "Content-Length"
+    - "Content-Type"
+  AllowCredentials: false
