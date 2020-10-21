@@ -6,15 +6,22 @@ import: github.com/pxxonline/traefik-plugin-cors
 summary: 'Traefik Cors Plugin'
 
 testData:
-  AllowMethods:
-    - "GET"
-    - "POST"
-    - "PUT"
-    - "PATCH"
-    - "DELETE"
-    - "HEAD"
-  AllowHeaders:
-    - "Origin"
-    - "Content-Length"
-    - "Content-Type"
-  AllowCredentials: false
+  allowedOrigins: 
+  - http://*.xxxx.com
+  allowedMethods: 
+  - GET
+  - POST
+  allowedHeaders: 
+  - Origin
+  - Accept
+  - Content-Type
+  - X-Requested-With
+  exposedHeaders: 
+  - Origin
+  - Accept
+  - Content-Type
+  - X-Requested-With
+  allowCredentials: true 
+  optionsPassthrough: false 
+  debug: true
+  maxAge: 36000
