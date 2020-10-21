@@ -1,4 +1,4 @@
-package traefikcors
+package traefik_plugin_cors
 
 import (
 	"context"
@@ -48,6 +48,7 @@ type Cors struct {
 
 // New created a new plugin.
 func New(ctx context.Context, next http.Handler, config *Config, name string) (http.Handler, error) {
+	fmt.Println(name)
 	return &Cors{
 		Name: name,
 		Next: next,
