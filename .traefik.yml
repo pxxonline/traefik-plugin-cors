@@ -1,9 +1,9 @@
-displayName: Cors Plugin
+displayName: Traefik Cors Plugin
 type: middleware
 
-import: github.com/pxxonline/traefik-cors
+import: github.com/pxxonline/traefik-plugin-cors
 
-summary: 'Cors'
+summary: 'Traefik Cors Plugin'
 
 testData:
   AllowMethods:
