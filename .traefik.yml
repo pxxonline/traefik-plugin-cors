@@ -6,15 +6,12 @@ import: github.com/pxxonline/traefik-plugin-cors
 summary: 'Traefik Cors Plugin'
 
 testData:
-  AllowMethods:
-    - "GET"
-    - "POST"
-    - "PUT"
-    - "PATCH"
-    - "DELETE"
-    - "HEAD"
-  AllowHeaders:
-    - "Origin"
-    - "Content-Length"
-    - "Content-Type"
-  AllowCredentials: false
+  allowed_methods:
+  - "GET"
+  - "POST"
+  - "PUT"
+  allowed_headers:
+  - "Origin"
+  - "Content-Length"
+  - "Content-Type"
+  allow_credentials: false
