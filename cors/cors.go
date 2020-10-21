@@ -22,9 +22,7 @@ package cors
 
 import (
 	"fmt"
-	"log"
 	"net/http"
-	"os"
 	"strconv"
 	"strings"
 )
@@ -104,20 +102,17 @@ type Cors struct {
 
 // New creates a new Cors handler with the provided options.
 func New(options Options) *Cors {
-	fmt.Println("000")
 	c := &Cors{
-		exposedHeaders:         convert(options.ExposedHeaders, http.CanonicalHeaderKey),
+		exposedHeaders:         ConvertCanonicalHeaderKey(options.ExposedHeaders),
 		allowOriginFunc:        options.AllowOriginFunc,
 		allowOriginRequestFunc: options.AllowOriginRequestFunc,
 		allowCredentials:       options.AllowCredentials,
 		maxAge:                 options.MaxAge,
 		optionPassthrough:      options.OptionsPassthrough,
 	}
-	fmt.Println("000")
-	if options.Debug && c.Log == nil {
-		c.Log = log.New(os.Stdout, "[cors] ", log.LstdFlags)
-	}
-	fmt.Println("001")
+	// if options.Debug && c.Log == nil {
+	// 	c.Log = log.New(os.Stdout, "[cors] ", log.LstdFlags)
+	// }
 	// Normalize options
 	// Note: for origins and methods matching, the spec requires a case-sensitive matching.
 	// As it may error prone, we chose to ignore the spec here.
@@ -149,14 +144,13 @@ func New(options Options) *Cors {
 			}
 		}
 	}
-	fmt.Println("002")
 	// Allowed Headers
 	if len(options.AllowedHeaders) == 0 {
 		// Use sensible defaults
 		c.allowedHeaders = []string{"Origin", "Accept", "Content-Type", "X-Requested-With"}
 	} else {
 		// Origin is always appended as some browsers will always request for this header at preflight
-		c.allowedHeaders = convert(append(options.AllowedHeaders, "Origin"), http.CanonicalHeaderKey)
+		c.allowedHeaders = ConvertCanonicalHeaderKey(append(options.AllowedHeaders, "Origin"))
 		for _, h := range options.AllowedHeaders {
 			if h == "*" {
 				c.allowedHeadersAll = true
@@ -165,15 +159,13 @@ func New(options Options) *Cors {
 			}
 		}
 	}
-	fmt.Println("003")
 	// Allowed Methods
 	if len(options.AllowedMethods) == 0 {
 		// Default is spec's "simple" methods
 		c.allowedMethods = []string{http.MethodGet, http.MethodPost, http.MethodHead}
 	} else {
-		c.allowedMethods = convert(options.AllowedMethods, strings.ToUpper)
+		c.allowedMethods = ConvertToUpper(options.AllowedMethods)
 	}
-	fmt.Println("004")
 	return c
 }
 
@@ -214,7 +206,7 @@ func (c *Cors) Handler(h http.Handler) http.Handler {
 			if c.optionPassthrough {
 				h.ServeHTTP(w, r)
 			} else {
-				w.WriteHeader(http.StatusOK)
+				w.WriteHeader(http.StatusNoContent)
 			}
 		} else {
 			c.logf("Handler: Actual request")
@@ -247,7 +239,7 @@ func (c *Cors) ServeHTTP(w http.ResponseWriter, r *http.Request, next http.Handl
 		if c.optionPassthrough {
 			next(w, r)
 		} else {
-			w.WriteHeader(http.StatusOK)
+			w.WriteHeader(http.StatusNoContent)
 		}
 	} else {
 		c.logf("ServeHTTP: Actual request")
@@ -355,9 +347,10 @@ func (c *Cors) handleActualRequest(w http.ResponseWriter, r *http.Request) {
 
 // convenience method. checks if a logger is set.
 func (c *Cors) logf(format string, a ...interface{}) {
-	if c.Log != nil {
-		c.Log.Printf(format, a...)
-	}
+	// if c.Log != nil {
+	// 	fmt.Printf(format, a...)
+	// }
+	fmt.Printf(format, a...)
 }
 
 // isOriginAllowed checks if a given origin is allowed to perform cross-domain requests

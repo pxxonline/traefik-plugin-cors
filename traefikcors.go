@@ -2,8 +2,6 @@ package traefik_plugin_cors
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/pxxonline/traefik-plugin-cors/cors"
@@ -30,13 +28,11 @@ func CreateConfig() *Config {
 type CorsTraefik struct {
 	next http.Handler
 	name string
-	c    *cors.Cors
+	Cors *cors.Cors
 }
 
 // New created a new plugin.
 func New(ctx context.Context, next http.Handler, config *Config, name string) (http.Handler, error) {
-	// fmt.Println(name)
-	// fmt.Println(toJson(config))
 
 	options := cors.Options{
 		AllowedOrigins:     config.AllowedOrigins,
@@ -46,41 +42,16 @@ func New(ctx context.Context, next http.Handler, config *Config, name string) (h
 		AllowCredentials:   config.AllowCredentials,
 		OptionsPassthrough: config.OptionsPassthrough,
 		MaxAge:             config.MaxAge,
-		// Debug:              config.Debug,
-		// // AllowOriginFunc:        allowOriginFunc,
-		// // AllowOriginRequestFunc: allowOriginRequestFunc,
+		Debug:              config.Debug,
 	}
-
-	fmt.Println(toJson(options.AllowedHeaders))
-	c := cors.New(options)
-
-	fmt.Println(c)
 
 	return &CorsTraefik{
 		name: name,
 		next: next,
-		c:    c,
+		Cors: cors.New(options),
 	}, nil
 }
 
 func (e *CorsTraefik) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
-	// e.c.Log.Printf(req.URL.String())
-	e.c.Handler(e.next).ServeHTTP(rw, req)
+	e.Cors.ServeHTTP(rw, req, e.next.ServeHTTP)
 }
-
-// toJson toJson
-func toJson(v interface{}) string {
-	if data, err := json.Marshal(v); err == nil {
-		return string(data)
-	}
-	return ""
-}
-
-// func allowOriginFunc(origin string) bool {
-// 	return true
-// }
-
-// // Optional origin validator (with request) function
-// func allowOriginRequestFunc(r *http.Request, origin string) bool {
-// 	return true
-// }

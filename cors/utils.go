@@ -1,7 +1,7 @@
 package cors
 
 import (
-	"fmt"
+	"net/http"
 	"strings"
 )
 
@@ -20,10 +20,24 @@ func (w wildcard) match(s string) bool {
 
 // convert converts a list of string using the passed converter function
 func convert(s []string, c converter) []string {
-	fmt.Println("=====")
 	out := []string{}
 	for _, i := range s {
 		out = append(out, c(i))
+	}
+	return out
+}
+
+func ConvertCanonicalHeaderKey(s []string) []string {
+	out := []string{}
+	for _, i := range s {
+		out = append(out, http.CanonicalHeaderKey(i))
+	}
+	return out
+}
+func ConvertToUpper(s []string) []string {
+	out := []string{}
+	for _, i := range s {
+		out = append(out, strings.ToUpper(i))
 	}
 	return out
 }
