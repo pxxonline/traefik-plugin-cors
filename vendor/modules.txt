@@ -1,0 +1,6 @@
+# github.com/gorilla/mux v1.8.0
+## explicit
+github.com/gorilla/mux
+# github.com/urfave/negroni v1.0.0
+## explicit
+github.com/urfave/negroni

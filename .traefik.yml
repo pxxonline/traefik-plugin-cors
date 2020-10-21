@@ -1,0 +1,20 @@
+displayName: Cors Plugin
+type: middleware
+
+import: github.com/pxxonline/traefik-cors
+
+summary: 'Cors'
+
+testData:
+  AllowMethods:
+    - "GET"
+    - "POST"
+    - "PUT"
+    - "PATCH"
+    - "DELETE"
+    - "HEAD"
+  AllowHeaders:
+    - "Origin"
+    - "Content-Length"
+    - "Content-Type"
+  AllowCredentials: false
