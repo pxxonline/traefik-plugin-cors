@@ -27,6 +27,8 @@ func convert(s []string, c converter) []string {
 	return out
 }
 
+// convert([]string{"aa-xx"},http.CanonicalHeaderKey)
+
 func ConvertCanonicalHeaderKey(s []string) []string {
 	out := []string{}
 	for _, i := range s {
