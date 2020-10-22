@@ -3,6 +3,7 @@ package traefik_plugin_cors
 import (
 	"context"
 	"net/http"
+	"net/http/httptest"
 
 	"github.com/pxxonline/traefik-plugin-cors/cors"
 )
@@ -52,6 +53,20 @@ func New(ctx context.Context, next http.Handler, config *Config, name string) (h
 	}, nil
 }
 
+func (e *CorsTraefik) replacer() http.HandlerFunc {
+	return http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
+		recorder := httptest.NewRecorder()
+
+		e.next.ServeHTTP(recorder, req)
+
+		rw.WriteHeader(recorder.Code)
+		_, _ = rw.Write(recorder.Body.Bytes())
+		for name, values := range recorder.Header() {
+			rw.Header().Set(name, values[0])
+		}
+	})
+}
+
 func (e *CorsTraefik) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
-	e.Cors.ServeHTTP(rw, req, e.next.ServeHTTP)
+	e.Cors.ServeHTTP(rw, req, e.replacer())
 }
