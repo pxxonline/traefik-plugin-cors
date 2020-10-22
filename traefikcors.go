@@ -58,9 +58,12 @@ func (e *CorsTraefik) replacer() http.HandlerFunc {
 		recorder := httptest.NewRecorder()
 
 		e.next.ServeHTTP(recorder, req)
-
-		rw.WriteHeader(recorder.Code)
-		_, _ = rw.Write(recorder.Body.Bytes())
+		if req.Method == http.MethodOptions {
+			rw.WriteHeader(http.StatusNoContent)
+		} else {
+			rw.WriteHeader(recorder.Code)
+			_, _ = rw.Write(recorder.Body.Bytes())
+		}
 		for name, values := range recorder.Header() {
 			rw.Header().Set(name, values[0])
 		}
