@@ -304,6 +304,10 @@ func (c *Cors) handlePreflight(w http.ResponseWriter, r *http.Request) {
 		headers.Set("Access-Control-Max-Age", strconv.Itoa(c.maxAge))
 	}
 	c.logf("  Preflight response headers: %v", headers)
+	r.Header.Del("Origin")
+	r.Header.Del("Access-Control-Request-Headers")
+	r.Header.Del("Access-Control-Request-Origin")
+	r.Header.Del("Access-Control-Request-Method")
 }
 
 // handleActualRequest handles simple cross-origin requests, actual request or redirects
@@ -343,6 +347,11 @@ func (c *Cors) handleActualRequest(w http.ResponseWriter, r *http.Request) {
 		headers.Set("Access-Control-Allow-Credentials", "true")
 	}
 	c.logf("  Actual response added headers: %v", headers)
+
+	r.Header.Del("Origin")
+	r.Header.Del("Access-Control-Request-Headers")
+	r.Header.Del("Access-Control-Request-Origin")
+	r.Header.Del("Access-Control-Request-Method")
 }
 
 // convenience method. checks if a logger is set.
