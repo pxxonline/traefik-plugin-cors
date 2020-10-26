@@ -58,18 +58,25 @@ func (e *CorsTraefik) replacer() http.HandlerFunc {
 		recorder := httptest.NewRecorder()
 
 		e.next.ServeHTTP(recorder, req)
+
 		if req.Method == http.MethodOptions {
 			rw.WriteHeader(http.StatusNoContent)
 		} else {
 			rw.WriteHeader(recorder.Code)
+			CopyHeaders(rw.Header(), recorder.Header())
 			_, _ = rw.Write(recorder.Body.Bytes())
-		}
-		for name, values := range recorder.Header() {
-			rw.Header().Set(name, values[0])
 		}
 	})
 }
 
 func (e *CorsTraefik) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	e.Cors.ServeHTTP(rw, req, e.replacer())
+}
+
+// CopyHeaders copies http headers from source to destination, it
+// does not overide, but adds multiple headers
+func CopyHeaders(dst http.Header, src http.Header) {
+	for k, vv := range src {
+		dst[k] = append(dst[k], vv...)
+	}
 }
