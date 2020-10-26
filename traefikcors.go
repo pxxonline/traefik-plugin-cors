@@ -77,6 +77,9 @@ func (e *CorsTraefik) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 // does not overide, but adds multiple headers
 func CopyHeaders(dst http.Header, src http.Header) {
 	for k, vv := range src {
-		dst[k] = append(dst[k], vv...)
+		headerKey := http.CanonicalHeaderKey(k)
+		if len(vv) > 0 {
+			dst[headerKey] = append(dst[k], vv...)
+		}
 	}
 }
